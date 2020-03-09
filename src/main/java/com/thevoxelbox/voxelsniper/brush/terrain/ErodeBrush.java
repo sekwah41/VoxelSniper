@@ -256,17 +256,43 @@ public class ErodeBrush extends Brush {
         Preset selection = Preset.tryValueOf(par[0]);
         if (selection != null) {
             this.currentPreset = selection.getParameters();
-        } else {
+        }/* else {
             printOptions(v);
             return;
+        }*/
+
+        this.currentPreset = Preset.MELT.preset;
+
+        int erosionFaces = this.currentPreset.erosionFaces;
+        int erosionRecursion = this.currentPreset.erosionRecursion;
+        int fillFaces = this.currentPreset.fillFaces;
+        int fillRecursion = this.currentPreset.fillRecursion;
+
+        for(String p : par) {
+            if(p.startsWith("e")) {
+                erosionFaces = parseValue("e", p);
+            }
+            else if(p.startsWith("E")) {
+                erosionRecursion = parseValue("E", p);
+            }
+            else if(p.startsWith("f")) {
+                fillFaces = parseValue("f", p);
+            }
+            else if(p.startsWith("F")) {
+                fillRecursion = parseValue("F", p);
+            }
         }
 
-        if (!this.currentPreset.equals(currentPresetBackup)) {
-            v.sendMessage(TextColors.AQUA, "Erosion minimum exposed faces set to ", TextColors.WHITE, this.currentPreset.getErosionFaces());
-            v.sendMessage(TextColors.BLUE, "Fill minumum touching faces set to ", TextColors.WHITE, this.currentPreset.getFillFaces());
-            v.sendMessage(TextColors.DARK_BLUE, "Erosion recursion amount set to ", TextColors.WHITE, this.currentPreset.getErosionRecursion());
-            v.sendMessage(TextColors.DARK_GREEN, "Fill recursion amount set to ", TextColors.WHITE, this.currentPreset.getFillRecursion());
-        }
+        this.currentPreset = new ErosionParameters(erosionFaces, erosionRecursion, fillFaces, fillRecursion);
+
+        v.sendMessage(TextColors.AQUA, "Erosion minimum exposed faces set to ", TextColors.WHITE, this.currentPreset.getErosionFaces());
+        v.sendMessage(TextColors.BLUE, "Fill minumum touching faces set to ", TextColors.WHITE, this.currentPreset.getFillFaces());
+        v.sendMessage(TextColors.DARK_BLUE, "Erosion recursion amount set to ", TextColors.WHITE, this.currentPreset.getErosionRecursion());
+        v.sendMessage(TextColors.DARK_GREEN, "Fill recursion amount set to ", TextColors.WHITE, this.currentPreset.getFillRecursion());
+    }
+
+    private int parseValue(String arg, String par) {
+        return Integer.parseInt(par.replace(arg, ""));
     }
 
     private enum Preset {
@@ -307,10 +333,10 @@ public class ErodeBrush extends Brush {
         private ErosionParameters inverse = null;
 
         public ErosionParameters(final int erosionFaces, final int erosionRecursion, final int fillFaces, final int fillRecursion) {
-            this.erosionFaces = erosionFaces;
-            this.erosionRecursion = erosionRecursion;
-            this.fillFaces = fillFaces;
-            this.fillRecursion = fillRecursion;
+            this.erosionFaces = erosionFaces; // e
+            this.erosionRecursion = erosionRecursion; // E
+            this.fillFaces = fillFaces; // f
+            this.fillRecursion = fillRecursion; // F
         }
 
         @Override
